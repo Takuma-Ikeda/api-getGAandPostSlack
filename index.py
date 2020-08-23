@@ -16,7 +16,7 @@ https://ga-dev-tools.appspot.com/dimensions-metrics-explorer/
 '''
 
 
-def initialize_analyticsreporting():
+def initialize_analytics_reporting():
     credentials = ServiceAccountCredentials.from_json_keyfile_name(
         KEY_FILE_LOCATION, SCOPES)
     analytics = build('analyticsreporting', 'v4', credentials=credentials)
@@ -50,22 +50,22 @@ def get_report(analytics):
 def get_metrics(response):
     metrics = {}
     for report in response.get('reports', []):
-        columnHeader = report.get('columnHeader', {})
-        dimensionHeaders = columnHeader.get('dimensions', [])
-        metricHeaders = columnHeader.get('metricHeader', {}).get('metricHeaderEntries', [])
+        column_header = report.get('columnHeader', {})
+        dimension_headers = column_header.get('dimensions', [])
+        metric_headers = column_header.get('metricHeader', {}).get('metricHeaderEntries', [])
 
         for row in report.get('data', {}).get('rows', []):
             dimensions = row.get('dimensions', [])
-            dateRangeValues = row.get('metrics', [])
+            date_range_values = row.get('metrics', [])
 
-            for header, dimension in zip(dimensionHeaders, dimensions):
+            for header, dimension in zip(dimension_headers, dimensions):
                 print(header + ': ' + dimension)
 
-            for i, values in enumerate(dateRangeValues):
+            for i, values in enumerate(date_range_values):
                 # print('Date range: ' + str(i))
-                for metricHeader, value in zip(metricHeaders, values.get('values')):
-                    print(metricHeader.get('name') + ': ' + value)
-                    metrics[metricHeader.get('name')] = value
+                for metric_header, value in zip(metric_headers, values.get('values')):
+                    print(metric_header.get('name') + ': ' + value)
+                    metrics[metric_header.get('name')] = value
     return metrics
 
 
@@ -94,7 +94,7 @@ def lambda_handler(event, context):
 
 
 def exe():
-    analytics = initialize_analyticsreporting()
+    analytics = initialize_analytics_reporting()
     response = get_report(analytics)
     metrics = get_metrics(response)
     post_slack(metrics)
