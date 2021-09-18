@@ -5,6 +5,7 @@ rm -rf dist
 mkdir dist
 cp -r index.py dist
 cp -r ga.py dist
+cp -r slack.py dist
 cp -r .env dist
 cp -r key_file.json dist
 pipenv lock -r > requirements.txt

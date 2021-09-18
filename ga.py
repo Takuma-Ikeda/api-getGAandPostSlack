@@ -1,10 +1,7 @@
 from googleapiclient.discovery import build
 from oauth2client.service_account import ServiceAccountCredentials
 from dotenv import load_dotenv
-import datetime
-import json
 import os
-import requests
 
 '''
 Google アナリティクス Reporting API v4 リファレンス
@@ -19,22 +16,20 @@ class GA:
 
     def __init__(self):
         load_dotenv()
+        self.scopes = [os.getenv('SCOPE')]
+        self.key_file_location = os.getenv('KEY_FILE_LOCATION')
+        self.view_id = os.getenv('VIEW_ID')
+        self.slack_web_hook_url = os.getenv('SLACK_WEB_HOOK_URL')
 
-        self.SCOPES = [os.getenv('SCOPE')]
-        self.KEY_FILE_LOCATION = os.getenv('KEY_FILE_LOCATION')
-        self.VIEW_ID = os.getenv('VIEW_ID')
-        self.SLACK_WEB_HOOK_URL = os.getenv('SLACK_WEB_HOOK_URL')
-
-    def exe(self):
+    def get_metrics(self):
         analytics = self.__initialize_analytics_reporting()
         response = self.__get_report(analytics)
         metrics = self.__get_metrics(response)
-        self.__post_slack(metrics)
 
         return metrics
 
     def __initialize_analytics_reporting(self):
-        credentials = ServiceAccountCredentials.from_json_keyfile_name(self.KEY_FILE_LOCATION, self.SCOPES)
+        credentials = ServiceAccountCredentials.from_json_keyfile_name(self.key_file_location, self.scopes)
         analytics = build('analyticsreporting', 'v4', credentials=credentials)
 
         return analytics
@@ -44,7 +39,7 @@ class GA:
             body={
                 'reportRequests': [
                     {
-                        'viewId': self.VIEW_ID,
+                        'viewId': self.view_id,
                         # 過去 7 日間のデータ取得
                         # 'dateRanges': [{'startDate': '7daysAgo', 'endDate': 'today'}],
                         # 昨日のデータ取得
@@ -57,7 +52,8 @@ class GA:
                         ],
                         # 国ごとに分けたい場合
                         # 'dimensions': [{'name': 'ga:country'}]
-                    }]
+                    }
+                ]
             }
         ).execute()
 
@@ -82,17 +78,3 @@ class GA:
                         metrics[metric_header.get('name')] = value
 
         return metrics
-
-    def __post_slack(self, metrics):
-        users = metrics['ga:users']
-        sessions = metrics['ga:sessions']
-        pvs = metrics['ga:pageviews']
-        dt_yesterday = datetime.datetime.now() - datetime.timedelta(days=1)
-        str_yesterday = dt_yesterday.strftime('%Y年%m月%d日')
-
-        requests.post(self.SLACK_WEB_HOOK_URL, json.dumps({
-            'text': str_yesterday + '\n[USERS] ' + users + '\n[SESSIONS] ' + sessions + '\n[PVS] ' + pvs,
-            'username': 'GA-Bot',
-            'icon_emoji': ':chart_with_upwards_trend:',
-            'link_names': 1,
-        }))

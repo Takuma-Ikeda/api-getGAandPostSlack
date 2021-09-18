@@ -1,17 +1,25 @@
 from ga import GA
+from slack import Slack
 import json
+
+
+def exe():
+    ga = GA()
+    metrics = ga.get_metrics()
+
+    slack = Slack(metrics)
+    slack.post()
+
+    return metrics
 
 
 # AWS Lambda ハンドラー
 def lambda_handler(event, context):
-    ga = GA()
-    metrics = ga.exe()
     return {
         'statusCode': 200,
-        'body': json.dumps(metrics)
+        'body': json.dumps(exe())
     }
 
 
 if __name__ == "__main__":
-    ga = GA()
-    metrics = ga.exe()
+    exe()
