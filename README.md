@@ -4,6 +4,24 @@
 - AWS Lambda に zip ファイルアップロードすることで利用可能です
 - `index.lambda_handler` をハンドラ設定してください
 - `.env` に環境変数を設定してください
+- `key_file.json` に GCP の情報を設定してください。下記フォーマットが想定されます
+
+```json
+{
+  "type": "*****",
+  "project_id": "*****",
+  "private_key_id": "*****",
+  "private_key": "*****",
+  "client_email": "*****",
+  "client_id": "*****",
+  "auth_uri": "*****",
+  "token_uri": "*****",
+  "auth_provider_x509_cert_url": "*****",
+  "client_x509_cert_url": "*****"
+}
+
+```
+
 - 解説記事
     - [【Lambda】Google Analytics集計を自動化する](https://suwaru.tokyo/%e3%80%90lambda%e3%80%91google-analytics%e9%9b%86%e8%a8%88%e3%82%92%e8%87%aa%e5%8b%95%e5%8c%96%e3%81%99%e3%82%8b/)
 
@@ -11,9 +29,9 @@
 
 - Python 3.8.5
 
-'''sh
+```sh
 pipenv shell
-'''
+```
 
 ## 手動実行
 
