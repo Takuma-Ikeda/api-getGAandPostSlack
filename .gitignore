@@ -1,0 +1,6 @@
+dist
+key_file.json
+lambda_function.zip
+.env
+.vscode
+.idea
