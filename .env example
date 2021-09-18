@@ -1,4 +1,4 @@
-SCOPE=
+SCOPE='https://www.googleapis.com/auth/analytics.readonly'
 KEY_FILE_LOCATION='key_file.json'
 VIEW_ID=
 SLACK_WEB_HOOK_URL=
