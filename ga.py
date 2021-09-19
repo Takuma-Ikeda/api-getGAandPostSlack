@@ -19,7 +19,6 @@ class GA:
         self.scopes = [os.getenv('SCOPE')]
         self.key_file_location = os.getenv('KEY_FILE_LOCATION')
         self.view_id = os.getenv('VIEW_ID')
-        self.slack_web_hook_url = os.getenv('SLACK_WEB_HOOK_URL')
 
     def get_metrics(self):
         analytics = self.__initialize_analytics_reporting()
